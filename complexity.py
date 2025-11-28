@@ -12,18 +12,11 @@ from sklearn.metrics import DistanceMetric
 import sklearn.pipeline
 import scipy.spatial
 import pandas as pd
-
 import matplotlib.pyplot as plt
-
-
 import pickle
-
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-
-
-
 
 
 class Complexity:
@@ -104,9 +97,9 @@ class Complexity:
 
         return 
 
-    
-    
-    
+    '''
+    helper functions
+    '''
     def __count_class_instances(self,y):
         '''
         Is called by the __init__ method.
@@ -207,7 +200,6 @@ class Complexity:
         
         return converted_arr
 
-
     def __read_csv(self,dataset_name):
         data = pd.read_csv(dataset_name).to_numpy()
         
@@ -230,7 +222,6 @@ class Complexity:
         y = [np.where(classes == i)[0][0] for i in y]
         return [np.array(X),np.array(y),meta]
 
-    
     def __read_file(self,file_name):
         '''
         Is called by the __init__ method.
@@ -296,7 +287,6 @@ class Complexity:
              
 
         return [X,y,meta]
-    
     
     def __distance_HEOM(self,X):
         '''
@@ -403,12 +393,6 @@ class Complexity:
      
         return dist_matrix
 
-    
-
-
-
-
-   
     def __calculate_distance_matrix(self,X,distance_func="HEOM"):
         '''
         Is called by the __init__ method.
@@ -433,10 +417,6 @@ class Complexity:
 
         return distance_matrix,unnorm_distance_matrix
 
-    
-
-
-
     def __get_class_inxs(self):
         '''
         Called by the __init__ method.
@@ -452,7 +432,6 @@ class Complexity:
             cls_ind=np.where(self.y==cls)[0]
             class_inds.append(cls_ind)
         return class_inds
-
 
     def __knn(self,inx,line,k,y=[],clear_diag=True):
         '''
@@ -489,7 +468,6 @@ class Complexity:
             count[cls_inx]+=1
 
         return count
-    
 
     def __knn_dists(self,inx,line,k,clear_diag=True):
         dists = []
@@ -504,7 +482,6 @@ class Complexity:
             #if(self.y[index]!=self.y[inx]):
         
         return dists
-
 
     def __hypersphere(self,inx,sigma,distance_matrix=[],y=[]):
         '''
@@ -553,7 +530,6 @@ class Complexity:
                 else:
                     n_minus+=1
         return [n_minus,n_plus]
-
    
     def __hypersphere_sim(self,inx,sigma):
         '''
@@ -617,8 +593,9 @@ class Complexity:
             tree_depth = dt.get_depth()
             return tree_depth
 
-
-    
+    '''
+    Instance Overlap Measures
+    '''    
     def R_value(self,k=5,theta=2,imb=False):
         '''
         Calculate the Augmented R value complexity measure defined in [1].
@@ -689,7 +666,7 @@ class Complexity:
 
         return r_values
        
-    def D3_value(self,k=5):
+    def D3_value(self,k=5, **kwargs):
         '''
         Calculate the D3 value complexity measure defined in [1].
 
@@ -720,8 +697,6 @@ class Complexity:
         self.metrics['instance']['D3'] = d3_matrix
         return d3_matrix
 
-
-    
     def kDN(self,k=5,imb=False):
         '''
         Calculate the kDN value complexity measure defined in [1]
@@ -794,8 +769,6 @@ class Complexity:
         self.metrics['instance']['CM'] = CM_value
         return CM_value   
 
-    
-
     def __MRI_p(self,profile):
         '''
         Calculate the MRI value of a pattern.
@@ -817,7 +790,6 @@ class Complexity:
     
         return mri_val
 
-    
     def count_occurences(self,labels):
         occurrences = {}
         for label in labels:
@@ -826,7 +798,6 @@ class Complexity:
             else:
                 occurrences[label] = 1
         return occurrences
-    
     
     def __MRI_k(self,cluster):
         '''
@@ -934,8 +905,6 @@ class Complexity:
 
                 self.metrics['multi']['MRCA'] = mrca
                 return mrca
-                
-    
 
     def C1(self,max_k=5,imb=False):
         '''
@@ -980,12 +949,6 @@ class Complexity:
 
         self.metrics['multi']['C1'] = c1_val
         return c1_val
-    
-    
-
-
-    
-
 
     def C2(self,max_k=5,imb=False):
         '''
@@ -1039,8 +1002,6 @@ class Complexity:
 
         self.metrics['multi']['C2'] = c2_val
         return c2_val
-
-
 
     def __calculate_n_inter(self,dist_matrix=[],y=[],imb=False):
         '''
@@ -1131,8 +1092,6 @@ class Complexity:
 
         self.metrics['struct']['N1'] = n1
         return n1
-
-  
     
     def N2(self,imb=False):
         '''
@@ -1195,11 +1154,6 @@ class Complexity:
         self.metrics['struct']['N2'] = N2_val
         return N2_val
 
-    
-   
-    
-    
-    
     def N3(self,k=1,imb=False,inst_level=False):
         '''
         Calculate the N3 value complexity measure in [1].
@@ -1289,11 +1243,6 @@ class Complexity:
        
         return X_interp, y_interp
 
-    
-    
-    
-    
-
     #todo change this
     def N4(self,k=1,imb=False):
         '''
@@ -1350,8 +1299,6 @@ class Complexity:
         self.metrics['instance']['N4'] = n4
         return n4
         
-       
-    
     def SI(self,k=1,imb=False):
         '''
         Calculate the Separability index (SI) complexity measure defined in [1].
@@ -1399,9 +1346,6 @@ class Complexity:
         self.metrics['instance']['SI'] = si_measure
         return si_measure
         
-
-
-
     def __find_nearest_oposite_class(self,x_inx,x_dist):
         '''
         Function called by __find_nearest_oposite_class_all.
@@ -1446,8 +1390,6 @@ class Complexity:
             nearest_oposite_class_dist_array.append(nearest_oposite_class_dist)
         return np.array(nearest_oposite_class_array),np.array(nearest_oposite_class_dist_array)
     
-    
-    
     def __find_spheres(self,ind,e_ind,e_dist,radius):
         '''
         Called by __get_sphere_count. 
@@ -1490,8 +1432,6 @@ class Complexity:
 
         return radius[ind]
 
-
-    
     def __is_inside(self,center_a,center_b,radius_a,radius_b):
         '''
         Check if a hypersphere a is inside an hypersphere b.
@@ -1559,9 +1499,6 @@ class Complexity:
 
         return inst_per_sphere    
 
-    
-
-
     def __get_sphere_count(self):
         '''
         Called by the T1, NSG and ICSV function.
@@ -1604,7 +1541,6 @@ class Complexity:
         '''
         
         return sphere_inst_count,radius
-    
 
     #only for datasets with no categorical features
     def T1(self,imb=False):
@@ -1651,7 +1587,6 @@ class Complexity:
         
         self.metrics['struct']['T1'] = t1
         return t1
-
 
     #only for datasets with no categorical features
     def DBC(self,distance_func="default",imb=False,sphere_count_method = "ONB"):
@@ -1726,10 +1661,6 @@ class Complexity:
         
         self.metrics['struct']['DBC'] = dbc_measure
         return dbc_measure
-
-    
-    
-    
     
     def LSC(self,imb=False):
         '''
@@ -1786,7 +1717,6 @@ class Complexity:
         
         self.metrics['struct']['LSC'] = lsc_measure
         return lsc_measure
-
 
     def Clust(self,imb=False):
         '''
@@ -2105,7 +2035,6 @@ class Complexity:
         
         return reverse_dic_labels,reverse_dic
 
-
     #only for datasets with no categorical features
     def purity(self,max_resolution=32):
         '''
@@ -2168,7 +2097,6 @@ class Complexity:
         pur= auc/0.702
         self.metrics['multi']['purity'] = pur
         return pur
-    
 
     #only for datasets with no categorical features
     def neighbourhood_separability(self,max_resolution=32):
@@ -2249,7 +2177,6 @@ class Complexity:
         self.metrics['multi']['neigh_sep'] = final_auc
         return final_auc
 
-
     #only for datasets with no categorical features
     def F1(self):
         '''
@@ -2300,7 +2227,6 @@ class Complexity:
         self.metrics['feature']['f1'] = f1_val
         return f1_val
 
-
     #only for datasets with no categorical features
     def F1v(self):
         '''
@@ -2339,10 +2265,6 @@ class Complexity:
         
         self.metrics['feature']['f1v'] = f1vs
         return f1vs
-
-
-
-    
 
     def F2(self,imb=False):
         '''
@@ -2542,7 +2464,6 @@ class Complexity:
                 f4s.append(subset_size / (len(c1_inds) + len(c2_inds)))
         return f4s
 
-
     def F4(self,imb=False):
         '''
         Calculates the F4 measure defined in [1]. 
@@ -2712,7 +2633,6 @@ class Complexity:
         self.metrics['f4'] = f4s
         return f4s
 
-    
     def __class_overlap(self,class_samples,other_samples):
         '''
         Called by the input_noise function.
@@ -2735,8 +2655,6 @@ class Complexity:
                    count+=1 
                 
         return count
-
-
 
     def input_noise(self,imb=False):
         '''
@@ -2789,9 +2707,6 @@ class Complexity:
         self.metrics['feature']['IN'] = ins
         return ins
 
-    
-
-    
     def borderline(self,imb=False,return_all=False):
         '''
         Calculates the borderline examples metric defined in [1].
@@ -2890,8 +2805,6 @@ class Complexity:
         
         self.metrics['instance']['deg_over'] = deg_ov
         return deg_ov
-    
-
 
     def get_ONB_sphreres(self):
         
@@ -2955,9 +2868,7 @@ class Complexity:
 
     # -*- coding: utf-8 -*-
     def ONB(self,imb=False,is_tot=False):
-
         """
-
         ONB complexity metric differentiating (averaged) by class
         ------
         Parameters:
@@ -2966,7 +2877,6 @@ class Complexity:
         Returns:
         avg (float): The ratios between the number of balls necessary to cover the points of a class and the number of points of that class
         """
-        
         if(len(self.sphere_tuple_ONB)==0):
             self.sphere_tuple_ONB = self.get_ONB_sphreres()
             
@@ -2994,17 +2904,25 @@ class Complexity:
                 self.metrics['struct']['ONB_avg'] = sum(avg) / len(self.classes)
                 return sum(avg) / len(self.classes) #return the average of the ratios between the number of balls necessary to cover the points of a class and the number of points of that class
 
-
-
-
-    def feature_overlap(self,imb=True,viz=True):
-        
+    def feature_overlap(self,imb=False,viz=False):
         if(imb):
             F1_val = self.F1()
             F1v_val = self.F1v()
-            F2_val = self.F2(imb=True)[1]
-            F3_val = self.F3(imb=True)[1]
-            F4_val = self.F4(imb=True)[1]
+            F2_val = self.F2(imb=True)
+            if len(F2_val) > 1:
+                F2_val = F2_val[1]
+            else:
+                F2_val = F2_val[0]
+            F3_val = self.F3(imb=True)
+            if len(F3_val) > 1:
+                F3_val = F3_val[1]
+            else:
+                F3_val = F3_val[0]
+            F4_val = self.F4(imb=True)
+            if len(F4_val) > 1:
+                F4_val = F4_val[1]
+            else:
+                F4_val = F4_val[0]
         else:
             F1_val = self.F1()
             F1v_val = self.F1v()
@@ -3025,8 +2943,7 @@ class Complexity:
 
         return [np.mean(F1_val),F1v_val[0],np.mean(F2_val),np.mean(F3_val),np.mean(F4_val)],["F1","F1v","F2","F3","F4"]
 
-    def instance_overlap(self,imb=True,viz=True,k=5):
-
+    def instance_overlap(self,imb=False,viz=False,k=5):
         if(imb):
             N3_val = self.N3(imb=True)[1]
             N4_val = self.N4(imb=True)[1]
@@ -3057,25 +2974,19 @@ class Complexity:
         self.metrics['instance']['DegOver'] = DegOver_val
         self.metrics['instance']['borderline'] = borderline_val
 
-
         if(viz):
             plt.bar(["N3","N4","kDN","CM","R","D3","D. Over.","Borderline"],[np.mean(N3_val),np.mean(N4_val),np.mean(kDN_val),np.mean(CM_val),np.mean(R_val),np.mean(D3_val),np.mean(DegOver_val),np.mean(borderline_val)])
-
             plt.show()
 
         return [np.mean(N3_val),np.mean(N4_val),np.mean(kDN_val),np.mean(CM_val),np.mean(R_val),np.mean(D3_val),np.mean(DegOver_val),np.mean(borderline_val)],["N3","N4","kDN","CM","R","D3","D. Over.","Borderline"]
 
-    def structure_overlap(self,imb=True,viz=True):
-
-
+    def structure_overlap(self,imb=False,viz=False):
         if(imb):
             N1_val = self.N1(imb=True)[1]
             N2_val = self.N2(imb=True)[1]
             ONB_val = self.ONB(imb=True)[1]
             LSC_val = self.LSC(imb=True)[1]
             Clust_val = self.Clust(imb=True)[1]
-
-
         else:
             N1_val = self.N1()
             N2_val = self.N2()
@@ -3085,11 +2996,9 @@ class Complexity:
             
         self.metrics['struct']['N1'] = N1_val
         self.metrics['struct']['N2'] = N2_val
-
         self.metrics['struct']['ONB'] = ONB_val
         self.metrics['struct']['LSC'] = LSC_val
         self.metrics['struct']['Clust'] = Clust_val
-             
 
         if(viz):
             plt.bar(["N1","N2","ONB","LSC","Clust"],[np.mean(N1_val),np.mean(N2_val),np.mean(ONB_val),np.mean(LSC_val),np.mean(Clust_val)])
@@ -3097,20 +3006,12 @@ class Complexity:
 
         return [np.mean(N1_val),np.mean(N2_val),np.mean(ONB_val),np.mean(LSC_val),np.mean(Clust_val)],["N1","N2","ONB","LSC","Clust"]
     
-
-    
-
     def viz_metrics(self,imb=False):
         colors = ['blue', 'green', 'red','yellow']
         print(self.metrics)
         color_inx = 0
         for key in list(self.metrics.keys()):
-            
-            
-            
             dic = self.metrics[key]
-            
-            
             keys = list(dic.keys())
             values = list(dic.values())
 
@@ -3120,71 +3021,49 @@ class Complexity:
             values_mean = []
             if(imb):
                for v in values:
-
-                    
-
                     if(type(v) is list or type(v)==np.ndarray):
                         min_class_inx = np.argmin(self.class_count)
-                        
-
-                        
                         if(type(v[0]) is list or type(v[0])==np.ndarray):
-                            
-                            
                             v_mean = np.mean(v,axis=0)
-                            
                             values_mean.append(v_mean[min_class_inx])
                         else:
                             values_mean.append(v[min_class_inx])
                     else:
                         values_mean.append(v)
             else:
-                
                 for v in values:
                     values_mean.append(np.mean(v))
 
-
             # Create the bar plot
-
             plt.title(key)
             plt.ylabel('Overlap Value')
             plt.xlabel('Metric')
             plt.bar(keys, values_mean, color=colors[color_inx])
-              
-
             color_inx+=1
         plt.show() 
 
     def instance_hardness_viz(self,k=5):
-        
         if(len(self.classes)>7):
             print("Can't represent more than 7 classes")
             return
-
-        
         pca = PCA(n_components=2)
         X_reduced = pca.fit_transform(self.X)
         print(X_reduced)
-
         values = self.N3(k=k,inst_level=True)
         print(values)
         markers = ['o', '^', 's', 'P', 'D', 'X', '*']
-
         for i in range(len(self.class_inxs)):
             c_inx = self.class_inxs[i]
             print(c_inx)
             X_class =  X_reduced[c_inx,:]
             values_class = values[c_inx]
             scatter = plt.scatter(X_class[:,0], X_class[:,1], c=values_class, cmap='coolwarm', s=100, edgecolor='k', alpha=0.8,vmin=0, vmax=1,marker=markers[i])
-        
 
         plt.colorbar(scatter, label='Gradient Value')
-
         # Label the axes
         plt.xlabel('Feature #1')
         plt.ylabel('Feature #2')
         plt.title('Instance Hardness')
-
         # Show the plot
         plt.tight_layout()
         plt.show()
